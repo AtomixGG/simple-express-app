@@ -1,19 +1,36 @@
 pipeline {
     agent any
 
+ tools {
+        nodejs 'nodejs-lts'  // <-- Use the exact name from Global Tool Configuration
+    }
+
+
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/aeff60/simple-express-app.git'
-                bat "npm install"
+                git branch: 'main', url: 'https://github.com/AtomixGG/simple-express-app.git'
             }
         }
 
-        stage('Scan') {
+        stage('Build') {
             steps {
-                withSonarQubeEnv(installationName: 'sq1') {
-                    bat "npm install sonar-scanner"
-                    bat 'npx sonar-scanner -X -X -Dsonar.projectKey=mywebapp'
+                sh 'npm install'
+            }
+        }
+
+        stage('SonarQube Scan') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'npx sonar-scanner -Dsonar.projectKey=mywebapp'
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
