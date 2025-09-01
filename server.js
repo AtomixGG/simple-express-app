@@ -7,23 +7,23 @@ const port = 4000;
 // MySQL database connection configuration
 const connection = mysql.createConnection({
   host: "localhost",
-  user: "username", // แทนที่ด้วยชื่อผู้ใช้ MySQL ของคุณ
-  password: "password", // แทนที่ด้วยรหัสผ่าน MySQL ของคุณ
-  database: "database_name" // แทนที่ด้วยชื่อฐานข้อมูลที่คุณต้องการเชื่อมต่อ
+  user: "username",   // ✅ ควรเปลี่ยนเป็น process.env.DB_USER ในการใช้งานจริง
+  password: "password", // ✅ เช่นเดียวกัน แนะนำใช้ env แทน hardcode
+  database: "database_name"
 });
 
 // Connect to MySQL database
 connection.connect((err) => {
   if (err) {
-    console.error('Error connecting to MySQL database: ' + err.stack);
-    return;
+    console.error("❌ Error connecting to MySQL database:", err.stack);
+    process.exit(1); // ✅ ออกจากโปรแกรมทันทีถ้าเชื่อมต่อ DB ไม่ได้
   }
-  console.log('Connected to MySQL database as id ' + connection.threadId);
+  console.log("✅ Connected to MySQL database as id", connection.threadId);
 });
 
 // Middleware to log request method and URL
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   next();
 });
 
@@ -53,10 +53,14 @@ app.get("/calculate/:operation/:num1/:num2", (req, res) => {
   const { operation, num1, num2 } = req.params;
   const a = parseFloat(num1);
   const b = parseFloat(num2);
-  
+
+  if (isNaN(a) || isNaN(b)) {
+    return res.status(400).json({ error: "Both num1 and num2 must be numbers" });
+  }
+
   let result;
-  
-  switch(operation) {
+
+  switch (operation) {
     case "add":
       result = a + b;
       break;
@@ -67,12 +71,17 @@ app.get("/calculate/:operation/:num1/:num2", (req, res) => {
       result = a * b;
       break;
     case "divide":
-      result = b !== 0 ? a / b : "Cannot divide by zero";
+      result = b !== 0 ? a / b : null;
+      if (result === null) {
+        return res.status(400).json({ error: "Cannot divide by zero" });
+      }
       break;
     default:
-      return res.status(400).json({ error: "Invalid operation. Use: add, subtract, multiply, divide" });
+      return res
+        .status(400)
+        .json({ error: "Invalid operation. Use: add, subtract, multiply, divide" });
   }
-  
+
   res.json({
     operation,
     operands: [a, b],
@@ -82,6 +91,5 @@ app.get("/calculate/:operation/:num1/:num2", (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`🚀 Server running at http://localhost:${port}`);
 });
-
