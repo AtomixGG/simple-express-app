@@ -36,3 +36,52 @@ app.get("/about", (req, res) => {
   res.send("About page");
 });
 
+// New simple function for lab exercise
+app.get("/health", (req, res) => {
+  const healthStatus = {
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || "development",
+    version: "1.0.0"
+  };
+  res.json(healthStatus);
+});
+
+// Simple calculator endpoint
+app.get("/calculate/:operation/:num1/:num2", (req, res) => {
+  const { operation, num1, num2 } = req.params;
+  const a = parseFloat(num1);
+  const b = parseFloat(num2);
+  
+  let result;
+  
+  switch(operation) {
+    case "add":
+      result = a + b;
+      break;
+    case "subtract":
+      result = a - b;
+      break;
+    case "multiply":
+      result = a * b;
+      break;
+    case "divide":
+      result = b !== 0 ? a / b : "Cannot divide by zero";
+      break;
+    default:
+      return res.status(400).json({ error: "Invalid operation. Use: add, subtract, multiply, divide" });
+  }
+  
+  res.json({
+    operation,
+    operands: [a, b],
+    result
+  });
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+
