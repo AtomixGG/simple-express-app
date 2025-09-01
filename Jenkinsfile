@@ -21,10 +21,7 @@ pipeline {
         stage('SonarQube Scan') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        export PATH=$JAVA_HOME/bin:$PATH
-                        npx sonar-scanner -Dsonar.projectKey=mywebapp
-                    '''
+                    sh 'npx sonar-scanner -Dsonar.projectKey=mywebapp'
                 }
             }
         }
@@ -38,3 +35,4 @@ pipeline {
         }
     }
 }
+
