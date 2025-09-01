@@ -20,6 +20,7 @@ pipeline {
         }
 
         stage('SonarQube Scan') {
+            tools { jdk 'jdk17' }
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh 'npx sonar-scanner -Dsonar.projectKey=mywebapp'
