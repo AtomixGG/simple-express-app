@@ -36,8 +36,10 @@ app.get("/about", (req, res) => {
   res.send("About page");
 });
 
-// ฟังก์ชันบวกเลข (แก้ code smell เล็กน้อย: ลบ unused variable)
+// ฟังก์ชันบวกเลข (มี code smell เล็กน้อย: unused variable)
 function addNumbers(a, b) {
+  let unusedVar = 100; // Code smell: variable declared but never used
+  let unusedVar2 = 200; // Code smell: variable declared but never used
   return a + b;
 }
 
