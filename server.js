@@ -7,9 +7,9 @@ const port = 4000;
 // MySQL database connection configuration
 const connection = mysql.createConnection({
   host: "localhost",
-  user: "username", // แทนที่ด้วยชื่อผู้ใช้ MySQL ของคุณ
-  password: "password", // แทนที่ด้วยรหัสผ่าน MySQL ของคุณ
-  database: "database_name" // แทนที่ด้วยชื่อฐานข้อมูลที่คุณต้องการเชื่อมต่อ
+  user: "username",
+  password: "password",
+  database: "database_name"
 });
 
 // Connect to MySQL database
@@ -36,13 +36,20 @@ app.get("/about", (req, res) => {
   res.send("About page");
 });
 
-// ✅ ฟังก์ชันบวกเลขง่าย ๆ
+// ฟังก์ชันบวกเลข (มี code smell เล็กน้อย: unused variable)
 function addNumbers(a, b) {
+  let unusedVar = 100; // Code smell: variable declared but never used
   return a + b;
 }
 
-// ตัวอย่างเรียกใช้งานฟังก์ชัน
-const num1 = 5;
-const num2 = 10;
-const sum = addNumbers(num1, num2);
-console.log(`ผลบวกของ ${num1} + ${num2} = ${sum}`);
+// Bug: ฟังก์ชันนี้คืนค่าไม่ถูกต้อง
+function buggyMultiply(a, b) {
+  return a - b; // Bug: แทนที่จะเป็น a*b
+}
+
+// เรียกใช้งานฟังก์ชัน
+const sum = addNumbers(5, 10);
+console.log("Sum:", sum);
+
+const result = buggyMultiply(5, 10);
+console.log("Multiply result (BUG):", result);
