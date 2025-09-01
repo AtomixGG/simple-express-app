@@ -1,10 +1,9 @@
 pipeline {
     agent any
 
- tools {
-        nodejs 'nodejs-lts'  // <-- Use the exact name from Global Tool Configuration
+    tools {
+        nodejs 'nodejs-lts'
     }
-
 
     stages {
         stage('Checkout') {
@@ -20,10 +19,12 @@ pipeline {
         }
 
         stage('SonarQube Scan') {
-            tools { jdk 'jdk17' }
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh 'npx sonar-scanner -Dsonar.projectKey=mywebapp'
+                    sh '''
+                        export PATH=$JAVA_HOME/bin:$PATH
+                        npx sonar-scanner -Dsonar.projectKey=mywebapp
+                    '''
                 }
             }
         }
