@@ -36,16 +36,13 @@ app.get("/about", (req, res) => {
   res.send("About page");
 });
 
-// ✅ New route: show current server time
-app.get("/time", (req, res) => {
-  const now = new Date();
-  res.json({
-    message: "Current server time",
-    time: now.toISOString()
-  });
-});
+// ✅ ฟังก์ชันบวกเลขง่าย ๆ
+function addNumbers(a, b) {
+  return a + b;
+}
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+// ตัวอย่างเรียกใช้งานฟังก์ชัน
+const num1 = 5;
+const num2 = 10;
+const sum = addNumbers(num1, num2);
+console.log(`ผลบวกของ ${num1} + ${num2} = ${sum}`);
